@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const FormStyle = styled.form`
     width: 89%;
-    max-width: 326px;
+    max-width: 368px;
     margin-bottom: 36px;
     margin-top: 28px;
 `;
