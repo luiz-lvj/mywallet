@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { IoAddCircleOutline, IoRemoveCircleOutline } from 'react-icons/io5';
+import { useHistory } from "react-router-dom";
 
 export default function InputMoney(){
+    const history = useHistory();
     return(
         <InputsContainer>
-            <SingleInput>
+            <SingleInput onClick={() => history.push("/entrance")}>
                 < IoAddCircleOutline size="24px" color="#FFFFFF"/>
                 <h3>Nova <br/>entrada</h3>
             </SingleInput>
 
-            <SingleInput>
+            <SingleInput onClick={() => history.push("/exit")}>
             < IoRemoveCircleOutline size="24px" color="#FFFFFF"/>
             <h3>Nova <br/>saída</h3>
             </SingleInput>
