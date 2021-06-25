@@ -8,6 +8,11 @@ export const userSchema = Joi.object({
     password: Joi.string().alphanum().required(),
 });
 
+export const userLoginSchema = Joi.object({
+    email: Joi.string().min(1).required(),
+    password: Joi.string().alphanum().required(),
+});
+
 export const IoSchema = Joi.object({
     value: Joi.number().integer().required(),
     description: Joi.string().required(),
