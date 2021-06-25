@@ -18,4 +18,5 @@ export const IoSchema = Joi.object({
     description: Joi.string().required(),
     type: Joi.string().valid("entrance", "exit").required(),
     date: Joi.date().required(),
+    userId: Joi.number().integer().required(),
 });

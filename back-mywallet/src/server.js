@@ -3,6 +3,7 @@ import cors from 'cors';
 import connection from './connectDb';
 import { userLoginSchema, userSchema } from './schemas';
 import bcrypt from 'bcrypt';
+import { isValidEmail, validEmail } from './utils';
 
 const app = express();
 const server_port = 4000;
@@ -21,7 +22,10 @@ app.post(routes.register, async (req, res) => {
             return res.sendStatus(400);
         }
         const name = req.body.name;
-        const email = req.body.email;
+        if(!isValidEmail(req.body.email)){
+            return res.sendStatus(400);
+        }
+        const email = validEmail(req.body.email);
         const balance = parseInt(req.body.balance);
         const balanceStatus = req.body.balanceStatus;
         const password = req.body.password;
@@ -58,9 +62,37 @@ app.post(routes.login, async (req, res) => {
                 balance: user.balance,
                 balanceStatus: user.balanceStatus
             }
+            res.status(200)
             return res.send(userLogged);
         }
         return res.sendStatus(400);
+    } catch{
+        return res.sendStatus(500);
+    }
+});
+
+app.get(routes.balance, async (req, res) => {
+    try{
+        if(!req.body.userId){
+            return res.sendStatus(400);
+        }
+        const userId = parseInt(req.body.userId.trim());
+        if(typeof(userId) !== "number"){
+            return res.sendStatus(400);
+        }
+        const iomoney = await connection.query(`SELECT
+        value, description, type, date
+        FROM iomey WHERE "userId"=$1`, [userId]);
+        res.status(200);
+        return res.send(iomoney);
+    } catch{
+        return res.sendStatus(500);
+    }
+});
+
+app.post(routes.balance, async (req, res) => {
+    try{
+
     } catch{
         return res.sendStatus(500);
     }
