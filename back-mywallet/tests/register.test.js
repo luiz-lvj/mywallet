@@ -33,12 +33,13 @@ describe(`POST ${routes.register}`, () =>{
         const registerUser = await supertest(app).post(routes.register).send(body);
         expect(registerUser.status).toEqual(400);
     });
+    beforeEach(async () => {
+        await connection.query('DELETE FROM users');
+    });
+    
+    afterAll(() => {
+        connection.end();
+    });
 });
 
-beforeEach(async () => {
-    await connection.query('DELETE FROM users');
-});
 
-afterAll(() => {
-    connection.end();
-})

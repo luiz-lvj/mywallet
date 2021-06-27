@@ -51,22 +51,22 @@ app.post(routes.login, async (req, res) => {
         }
         const email = String(req.body.email).trim();
         const password = String(req.body.password).trim();
+        
         const user = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
         if(!user || user.rows.length <= 0){
             return res.sendStatus(404);
         }
-        if(bcrypt.compareSync(password, user.password)){
+        if(bcrypt.compareSync(password, user.rows[0].password)){
             const userLogged = {
                 name: user.name,
                 email: user.email,
-                balance: user.balance,
-                balanceStatus: user.balanceStatus
             }
             res.status(200)
             return res.send(userLogged);
         }
         return res.sendStatus(400);
-    } catch{
+    } catch(err){
+        console.log(err)
         return res.sendStatus(500);
     }
 });
