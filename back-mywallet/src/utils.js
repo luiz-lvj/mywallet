@@ -1,5 +1,7 @@
+import connection from "./connectDb.js";
+
 export function isValidEmail(email){
-    const emailStr = String(email).toLowerCase.trim();
+    const emailStr = String(email).trim();
     if(emailStr.includes(" ")){
         return false;
     }
@@ -7,5 +9,29 @@ export function isValidEmail(email){
     return re.test(emailStr);
 }
 export function validEmail(validE){
-    return String(validE).toLowerCase.trim();
+    return String(validE).trim();
+}
+
+export async function isValidId(tableName, id){
+    try{
+        const element = await connection.query('SELECT id FROM $1 WHERE id=$2', [tableName, id]);
+        if(element.rows.length <= 0){
+            return false;
+        }
+        return true;
+    } catch{
+        return false;
+    }
+}
+
+export async function isDuplicatedEmail(email){
+    try{
+        const user = await connection.query('SELECT email FROM users WHERE email=$1', [email]);
+        if(user.rows.length > 0){
+            return true;
+        }
+        return false;
+    } catch{
+        return true;
+    }
 }
