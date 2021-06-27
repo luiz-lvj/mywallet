@@ -58,6 +58,7 @@ app.post(routes.login, async (req, res) => {
         }
         if(bcrypt.compareSync(password, user.rows[0].password)){
             const userLogged = {
+                id: user.id,
                 name: user.name,
                 email: user.email,
             }
@@ -76,16 +77,20 @@ app.get(routes.balance, async (req, res) => {
         if(!req.body.userId){
             return res.sendStatus(400);
         }
-        const userId = parseInt(req.body.userId.trim());
+        const userId = parseInt(req.body.userId);
         if(typeof(userId) !== "number"){
+            
             return res.sendStatus(400);
+        }
+        if(!(await isValidId('iomoney', userId))){
+            return res.sendStatus(404);
         }
         const iomoney = await connection.query(`SELECT
         value, description, type, date
         FROM iomoney WHERE "userId"=$1`, [userId]);
         res.status(200);
         return res.send(iomoney);
-    } catch{
+    } catch {
         return res.sendStatus(500);
     }
 });
@@ -103,8 +108,9 @@ app.post(routes.balance, async (req, res) => {
         if(!(await isValidId('users', userId))){
             return res.sendStatus(404);
         }
-
-        console.log(date);
+        const newEntranceOrExit = connection.query(`INSERT INTO iomoney (
+        value, description, type, date, "userId")
+        VALUES ($1, $2, $3, $4, $5)`,[value, description, type, date, userId])
         return res.sendStatus(200);
     } catch{
         return res.sendStatus(500);
