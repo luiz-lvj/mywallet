@@ -17,25 +17,20 @@ import InputPage from './components/Home/InputPage';
 */
 
 export default function App(){
-  const [user, setUser] = useState({
-    id: 1,
-    name: 'Luiz',
-    balance: 1000,
-    isBalancePositive: true,
-  });
+  const [user, setUser] = useState({});
 
   return(
     <UserContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <GlobalStyle />
         <Switch>
-          <Route path="/login" exact>
+          <Route path="/" exact>
             <Login />
           </Route>
           <Route path="/register" exact>
             <Register />
           </Route>
-          <Route path="/" exact>
+          <Route path="/home" exact>
             <Home />
           </Route>
           <Route path="/entrance" exact>
@@ -45,7 +40,7 @@ export default function App(){
             <InputPage inputType="exit" />
           </Route>
           <Route>
-            <Home />
+            <Login />
           </Route>
         </Switch>
       </BrowserRouter>

@@ -38,8 +38,7 @@ app.post(routes.register, async (req, res) => {
         
         const newUser = await connection.query(`INSERT INTO users(name, email, password) VALUES ($1, $2, $3)`,[name, email,hashPassword] );
         return res.sendStatus(201);
-    } catch(err){
-        console.log(err)
+    } catch{
         return res.sendStatus(500);
     }
 });
@@ -58,38 +57,34 @@ app.post(routes.login, async (req, res) => {
         }
         if(bcrypt.compareSync(password, user.rows[0].password)){
             const userLogged = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
+                id: user.rows[0].id,
+                name: user.rows[0].name,
+                email: user.rows[0].email,
             }
             res.status(200)
             return res.send(userLogged);
         }
         return res.sendStatus(400);
-    } catch(err){
-        console.log(err)
+    } catch{
         return res.sendStatus(500);
     }
 });
 
-app.get(routes.balance, async (req, res) => {
+app.get(routes.balance + '/:userId', async (req, res) => {
     try{
-        if(!req.body.userId){
+        if(!req.params.userId){
             return res.sendStatus(400);
         }
-        const userId = parseInt(req.body.userId);
+        const userId = parseInt(req.params.userId);
         if(typeof(userId) !== "number"){
             
             return res.sendStatus(400);
         }
-        if(!(await isValidId('iomoney', userId))){
-            return res.sendStatus(404);
-        }
-        const iomoney = await connection.query(`SELECT
-        value, description, type, date
+        const iomoney = await connection.query(`SELECT 
+        value, description, type, date 
         FROM iomoney WHERE "userId"=$1`, [userId]);
         res.status(200);
-        return res.send(iomoney);
+        return res.send(iomoney.rows);
     } catch {
         return res.sendStatus(500);
     }
@@ -105,7 +100,8 @@ app.post(routes.balance, async (req, res) => {
         const type = req.body.type;
         const date = req.body.date;
         const userId = parseInt(req.body.userId);
-        if(!(await isValidId('users', userId))){
+        if(!(await isValidId(userId))){
+            
             return res.sendStatus(404);
         }
         const newEntranceOrExit = connection.query(`INSERT INTO iomoney (

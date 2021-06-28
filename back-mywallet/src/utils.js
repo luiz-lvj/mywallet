@@ -12,9 +12,9 @@ export function validEmail(validE){
     return String(validE).trim();
 }
 
-export async function isValidId(tableName, id){
+export async function isValidId(id){
     try{
-        const element = await connection.query('SELECT id FROM $1 WHERE id=$2', [tableName, id]);
+        const element = await connection.query('SELECT * FROM users WHERE id=$1', [id]);
         if(element.rows.length <= 0){
             return false;
         }
